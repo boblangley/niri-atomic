@@ -12,16 +12,15 @@ modules:
       cleanup: true # Clean up added repos after module is done
       copr:
         - yalter/niri
-        - starfish/howdy-beta
+        - ronnypfannschmidt/howdy-beta
       files:
         - https://download.docker.com/linux/fedora/docker-ce.repo
         - https://packages.microsoft.com/yumrepos/vscode/config.repo
     install:
       packages:
         - niri                     # Niri desktop environment
-        - xdg-desktop-portal-gnome # Essential for screen sharing/file pickers
         - xdg-desktop-portal-wlr   # Wayland portal backend for wlroots compositors
-        - polkit-gnome             # Authentication dialogs for graphical apps
+        - mate-polkit              # Polkit authentication agent
         - waybar                   # Status bar for Sway/Wayland
         - fuzzel                   # Launcher (fuzzy app launcher)
         - mako                     # Notification daemon for Wayland
@@ -36,16 +35,11 @@ modules:
         - code                     # Layered VSCode for seamless DevContainers
         - howdy                    # Face-authenticator (PAM) for login
         - howdy-gtk                # GTK integration for Howdy settings UI
-        - howdy-authselect         # The critical persistence hack from Starfish
+        - howdy-authselect         # No match in COPR repo for F43
         - python3-pip              # Python package installer, often required by apps
-        - nano                     # Simple terminal text editor
         - micro                    # Modern terminal text editor
         - git-all                  # Git and related tooling
-        - jq                       # JSON processor
         - yq                       # YAML processor
-        - wget2                    # Modern wget implementation
-        - wget2-wget               # Compatibility symlink for wget2
-        - curl                     # URL transfer tool
         - ripgrep                  # Fast recursive search tool
         - bat                      # Cat clone with syntax highlighting
         - tldr                     # Simplified man pages/examples
@@ -88,6 +82,8 @@ modules:
         - com.obsproject.Studio          # Recording/streaming app (OBS)
         - com.tomjwatson.Emote           # Emote (emoji/stickers) app
         - org.gnome.seahorse.Application # GNOME keyring and secrets manager
+        - org.mozilla.firefox
+        - com.google.Chrome
   # 5. Signing (Security)
   - type: signing
 
