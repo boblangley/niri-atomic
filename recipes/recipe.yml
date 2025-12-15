@@ -1,45 +1,110 @@
----
-# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
-# image will be published to ghcr.io/<user>/<name>
-name: template
-# description will be included in the image's metadata
-description: This is my personal OS image.
-
-# the base image to build on top of (FROM) and the version tag to use
+name: niri-atomic
+description: Custom Fedora Atomic with Niri, Docker, and Howdy
 base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
+image-version: 43
+platforms:
+  - linux/amd64
 
-# module configuration, executed in order
-# you can include multiple instances of the same module
 modules:
-  - type: files
-    files:
-      - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
-
+  # 1. System Settings & Repositories
   - type: dnf
     repos:
+      cleanup: true # Clean up added repos after module is done
       copr:
-        - atim/starship
+        - yalter/niri
+        - starfish/howdy-beta
+      files:
+        - https://download.docker.com/linux/fedora/docker-ce.repo
+        - https://packages.microsoft.com/yumrepos/vscode/config.repo
     install:
       packages:
-        - micro
-        - starship
+        - niri                     # Niri desktop environment
+        - xdg-desktop-portal-gnome # Essential for screen sharing/file pickers
+        - xdg-desktop-portal-wlr   # Wayland portal backend for wlroots compositors
+        - polkit-gnome             # Authentication dialogs for graphical apps
+        - waybar                   # Status bar for Sway/Wayland
+        - fuzzel                   # Launcher (fuzzy app launcher)
+        - mako                     # Notification daemon for Wayland
+        - swaylock                 # Lock screen utility for Sway
+        - swayidle                 # Idle/screen timeout daemon for Sway
+        - network-manager-applet   # System tray applet for NetworkManager
+        - docker-ce                # Docker engine for container runtime
+        - docker-ce-cli            # Docker CLI tools
+        - containerd.io            # Container runtime used by Docker
+        - docker-buildx-plugin     # Buildx plugin for multi-arch builds
+        - docker-compose-plugin    # Docker Compose v2 plugin
+        - code                     # Layered VSCode for seamless DevContainers
+        - howdy                    # Face-authenticator (PAM) for login
+        - howdy-gtk                # GTK integration for Howdy settings UI
+        - howdy-authselect         # The critical persistence hack from Starfish
+        - python3-pip              # Python package installer, often required by apps
+        - nano                     # Simple terminal text editor
+        - micro                    # Modern terminal text editor
+        - git-all                  # Git and related tooling
+        - jq                       # JSON processor
+        - yq                       # YAML processor
+        - wget2                    # Modern wget implementation
+        - wget2-wget               # Compatibility symlink for wget2
+        - curl                     # URL transfer tool
+        - ripgrep                  # Fast recursive search tool
+        - bat                      # Cat clone with syntax highlighting
+        - tldr                     # Simplified man pages/examples
+        - fastfetch                # Lightweight system info fetcher
+        - pandoc                   # Document converter (Markdown ↔ other formats)
+        - tokei                    # Codebase stats tool
+        - foot                     # Wayland-native terminal emulator
     remove:
       packages:
-        # example: removing firefox (in favor of the flatpak)
-        # "firefox" is the main package, "firefox-langpacks" is a dependency
-        - firefox
-        - firefox-langpacks # also remove firefox dependency (not required for all packages, this is a special case)
+        - firefox                  # Removing stock browser (using Flatpak instead)
+        - firefox-langpacks
 
+  # 2. System Services
+  - type: systemd
+    system:
+      enabled:
+        - docker.service
+        - howdy-authselect.path    # Watches PAM files to re-apply Howdy config after updates
+
+  # 3. Custom Scripts (SELinux & Groups)
+  - type: script
+    scripts:
+      - install-selinux-policies.sh # We will create this script below
+
+  # 4. Applications (Flatpaks)
   - type: default-flatpaks
-    configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
-        scope: system
-        # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
-          - org.mozilla.firefox
-          - org.gnome.Loupe
-      - scope: user # Also add Flathub user repo, but no user packages
+    notify: true
+    system:
+      repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
+      install:
+        - com.vivaldi.Vivaldi            # Chromium-based web browser with sync
+        - com.discordapp.Discord         # Voice/video/text chat client
+        - org.gnome.Loupe                # Lightweight image viewer
+        - org.gnome.FileRoller           # Archive manager/zip utility
+        - io.missioncenter.MissionCenter # GUI system resource monitor
+        - com.termius.Termius            # SSH and terminal client
+        - com.bitwarden.desktop          # Password manager desktop client
+        - dev.zed.Zed                    # Zed code editor (native GUI)
+        - com.spotify.Client             # Music streaming client
+        - com.obsproject.Studio          # Recording/streaming app (OBS)
+        - com.tomjwatson.Emote           # Emote (emoji/stickers) app
+        - org.gnome.seahorse.Application # GNOME keyring and secrets manager
+  # 5. Signing (Security)
+  - type: signing
 
-  - type: signing # this sets up the proper policy & signing files for signed images to work fully
+  - type: chezmoi
+    repository: "https://github.com/boblangley/dotfiles" # my dotfiles repo
+    all-users: false # make users have to enable chezmoi manually
+    file-conflict-policy: replace # override changed files with those from the repo
+
+  - type: brew
+    nofile-limits: true
+
+  - type: fonts
+    fonts:
+      nerd-fonts:
+        - FiraMono
+        - Hack
+        - SourceCodePro
+      google-fonts:
+        - Roboto
+        - Open Sans
