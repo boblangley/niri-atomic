@@ -66,24 +66,26 @@ modules:
 
   # 4. Applications (Flatpaks)
   - type: default-flatpaks
-    notify: true
-    system:
-      repo-url: https://dl.flathub.org/repo/flathub.flatpakrepo
-      install:
-        - com.vivaldi.Vivaldi            # Chromium-based web browser with sync
-        - com.discordapp.Discord         # Voice/video/text chat client
-        - org.gnome.Loupe                # Lightweight image viewer
-        - org.gnome.FileRoller           # Archive manager/zip utility
-        - io.missioncenter.MissionCenter # GUI system resource monitor
-        - com.termius.Termius            # SSH and terminal client
-        - com.bitwarden.desktop          # Password manager desktop client
-        - dev.zed.Zed                    # Zed code editor (native GUI)
-        - com.spotify.Client             # Music streaming client
-        - com.obsproject.Studio          # Recording/streaming app (OBS)
-        - com.tomjwatson.Emote           # Emote (emoji/stickers) app
-        - org.gnome.seahorse.Application # GNOME keyring and secrets manager
-        - org.mozilla.firefox
-        - com.google.Chrome
+    configurations:
+      - notify: true
+        scope: system
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        install:
+          - com.vivaldi.Vivaldi            # Chromium-based web browser with sync
+          - com.discordapp.Discord         # Voice/video/text chat client
+          - org.gnome.Loupe                # Lightweight image viewer
+          - org.gnome.FileRoller           # Archive manager/zip utility
+          - io.missioncenter.MissionCenter # GUI system resource monitor
+          - com.termius.Termius            # SSH and terminal client
+          - com.bitwarden.desktop          # Password manager desktop client
+          - dev.zed.Zed                    # Zed code editor (native GUI)
+          - com.spotify.Client             # Music streaming client
+          - com.obsproject.Studio          # Recording/streaming app (OBS)
+          - com.tomjwatson.Emote           # Emote (emoji/stickers) app
+          - org.gnome.seahorse.Application # GNOME keyring and secrets manager
+          - org.mozilla.firefox
+          - com.google.Chrome
   # 5. Signing (Security)
   - type: signing
 
