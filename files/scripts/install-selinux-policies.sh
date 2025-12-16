@@ -7,7 +7,7 @@ echo "Compiling Custom SELinux Policies..."
 
 # Check if policy tools are installed, if not, this would fail (they are in base image)
 # Navigate to where we placed the.te file via the 'files' module
-cd /usr/share/selinux/packages/
+cd /tmp/files/system/usr/share/selinux/packages/
 
 if [ -f howdy.te ]; then
     # 1. Compile text (.te) to binary module (.mod)
