@@ -37,6 +37,7 @@ modules:
         - howdy-authselect         # No match in COPR repo for F43
         - python3-pip              # Python package installer, often required by apps
         - git-all                  # Git and related tooling
+        - zsh                      # Zsh shell
     remove:
       packages:
         - firefox                  # Removing stock browser (using Flatpak instead)
