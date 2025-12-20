@@ -32,6 +32,8 @@ modules:
         - mako
         - swaylock
         - swayidle
+        - foot
+        - below
         
         # Audio / Video (Multimedia support)
         - alsa-firmware
@@ -62,12 +64,6 @@ modules:
 
         # Containers & Tools
         - docker-ce                
-        - docker-ce-cli            
-        - containerd.io            
-        - docker-buildx-plugin     
-        - docker-compose-plugin    
-        - distrobox
-        - zsh
 
   - type: systemd
     system:
