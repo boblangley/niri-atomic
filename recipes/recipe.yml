@@ -1,61 +1,83 @@
 name: niri-atomic
-description: Custom Fedora Atomic with Niri, Docker, and Howdy
-base-image: ghcr.io/ublue-os/silverblue-main
+description: Custom Fedora Atomic with Niri, Docker, and Howdy (Bluefin-DX Base)
+base-image: ghcr.io/ublue-os/bluefin-dx
 image-version: 43
 platforms:
   - linux/amd64
 
 modules:
-  # 1. System Settings & Repositories
   - type: dnf
     repos:
-      cleanup: true # Clean up added repos after module is done
+      cleanup: true
       copr:
-        - yalter/niri
+        - yalter/niri-git
         - ronnypfannschmidt/howdy-beta
       files:
         - https://download.docker.com/linux/fedora/docker-ce.repo
-        - https://packages.microsoft.com/yumrepos/vscode/config.repo
     install:
       packages:
-        - niri                     # Niri desktop environment
-        - xdg-desktop-portal-wlr   # Wayland portal backend for wlroots compositors
-        - mate-polkit              # Polkit authentication agent
-        - waybar                   # Status bar for Sway/Wayland
-        - fuzzel                   # Launcher (fuzzy app launcher)
-        - mako                     # Notification daemon for Wayland
-        - swaylock                 # Lock screen utility for Sway
-        - swayidle                 # Idle/screen timeout daemon for Sway
-        - network-manager-applet   # System tray applet for NetworkManager
-        - docker-ce                # Docker engine for container runtime
-        - docker-ce-cli            # Docker CLI tools
-        - containerd.io            # Container runtime used by Docker
-        - docker-buildx-plugin     # Buildx plugin for multi-arch builds
-        - docker-compose-plugin    # Docker Compose v2 plugin
-        - howdy                    # Face-authenticator (PAM) for login
-        - howdy-gtk                # GTK integration for Howdy settings UI
-        - howdy-authselect         # No match in COPR repo for F43
-        - python3-pip              # Python package installer, often required by apps
-        - git-all                  # Git and related tooling
-        - zsh                      # Zsh shell
-    remove:
-      packages:
-        - firefox                  # Removing stock browser (using Flatpak instead)
-        - firefox-langpacks
+        # System & Wayland Glue
+        - dbus-tools
+        - dbus-daemon
+        - xdg-desktop-portal-gtk
+        - xdg-desktop-portal-wlr
+        - wl-clipboard
+        - qt5-wayland
+        - qt6-wayland
+        
+        # Niri Desktop Environment
+        - niri
+        - waybar
+        - fuzzel
+        - mako
+        - swaylock
+        - swayidle
+        
+        # Audio / Video (Multimedia support)
+        - alsa-firmware
+        - wireplumber
+        - pipewire
+        - pulseaudio-utils
+        - pipewire-libs-extra
+        - libfdk-aac
+        - ffmpeg
+        - ffmpeg-libs
+        - ffmpegthumbnailer
+        - gstreamer1-plugins-bad
+        - gstreamer1-plugins-ugly 
 
-  # 2. System Services
+        # Auth & Security
+        - polkit
+        - mate-polkit              
+        - gnome-keyring
+        - howdy                    
+        - howdy-gtk                
+
+        # File Management (Nautilus extensions)
+        - gvfs-smb
+        - gvfs-nfs
+        - gvfs-fuse
+        - gvfs-archive
+        - heif-pixbuf-loader
+
+        # Containers & Tools
+        - docker-ce                
+        - docker-ce-cli            
+        - containerd.io            
+        - docker-buildx-plugin     
+        - docker-compose-plugin    
+        - distrobox
+        - zsh
+
   - type: systemd
     system:
       enabled:
         - docker.service
-        - howdy-authselect.path    # Watches PAM files to re-apply Howdy config after updates
 
-  # 3. Custom Scripts (SELinux & Groups)
   - type: script
     scripts:
-      - install-selinux-policies.sh # We will create this script below
+      - install-selinux-policies.sh 
 
-  # 4. Applications (Flatpaks)
   - type: default-flatpaks
     configurations:
       - notify: true
@@ -63,28 +85,21 @@ modules:
         repo:
           url: https://dl.flathub.org/repo/flathub.flatpakrepo
         install:
-          - com.bitwarden.desktop          # Password manager desktop client
-          - com.discordapp.Discord         # Voice/video/text chat client
-          - com.google.Chrome              # Google Chrome browser
-          - com.obsproject.Studio          # Recording/streaming app (OBS)
-          - com.spotify.Client             # Music streaming client
-          - com.termius.Termius            # SSH and terminal client
-          - com.tomjwatson.Emote           # Emote (emoji/stickers) app
-          - com.vivaldi.Vivaldi            # Chromium-based web browser with sync
-          - io.missioncenter.MissionCenter # GUI system resource monitor
-          - org.gnome.Loupe                # Lightweight image viewer
-          - org.gnome.FileRoller           # Archive manager/zip utility
-          - org.gnome.seahorse.Application # GNOME keyring and secrets manager
-          - org.mozilla.firefox            # Firefox web browser
-
-  # 5. Signing (Security)
-  - type: signing
+          - com.bitwarden.desktop          
+          - com.discordapp.Discord         
+          - com.google.Chrome              
+          - com.obsproject.Studio          
+          - com.spotify.Client             
+          - io.missioncenter.MissionCenter 
+          - org.gnome.Loupe                
+          - org.gnome.FileRoller           
 
   - type: chezmoi
-    repository: "https://github.com/boblangley/dotfiles" # my dotfiles repo
-    all-users: false # make users have to enable chezmoi manually
-    file-conflict-policy: replace # override changed files with those from the repo
+    repository: "https://github.com/boblangley/dotfiles"
+    all-users: false 
+    file-conflict-policy: replace 
 
+  # Bluefin-DX already has Brew, but we keep this to ensure your limits are set
   - type: brew
     nofile-limits: true
 
@@ -97,3 +112,5 @@ modules:
       google-fonts:
         - Roboto
         - Open Sans
+
+  - type: signing
