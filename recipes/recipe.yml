@@ -42,6 +42,8 @@ modules:
         - pulseaudio-utils
         - pipewire-libs-extra
         - libfdk-aac
+        - python3-opencv
+        - python3-devel
         - ffmpeg
         - ffmpeg-libs
         - ffmpegthumbnailer
