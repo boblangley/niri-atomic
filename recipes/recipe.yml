@@ -54,7 +54,8 @@ modules:
         - mate-polkit              
         - gnome-keyring
         - howdy                    
-        - howdy-gtk       
+        - howdy-gtk
+        - howdy-authselect
 
   - type: systemd
     system:
