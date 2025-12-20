@@ -22,8 +22,8 @@ modules:
         - xdg-desktop-portal-gtk
         - xdg-desktop-portal-wlr
         - wl-clipboard
-        - qt5-wayland
-        - qt6-wayland
+        - qt5-qtwayland
+        - qt6-qtwayland
         
         # Niri Desktop Environment
         - niri
@@ -46,24 +46,15 @@ modules:
         - ffmpeg-libs
         - ffmpegthumbnailer
         - gstreamer1-plugins-bad
-        - gstreamer1-plugins-ugly 
+        - gstreamer1-plugins-ugly
+        - v4l-utils
 
         # Auth & Security
         - polkit
         - mate-polkit              
         - gnome-keyring
         - howdy                    
-        - howdy-gtk                
-
-        # File Management (Nautilus extensions)
-        - gvfs-smb
-        - gvfs-nfs
-        - gvfs-fuse
-        - gvfs-archive
-        - heif-pixbuf-loader
-
-        # Containers & Tools
-        - docker-ce                
+        - howdy-gtk       
 
   - type: systemd
     system:
@@ -84,7 +75,6 @@ modules:
           - com.bitwarden.desktop          
           - com.discordapp.Discord         
           - com.google.Chrome              
-          - com.obsproject.Studio          
           - com.spotify.Client             
           - io.missioncenter.MissionCenter 
           - org.gnome.Loupe                
