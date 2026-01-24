@@ -52,6 +52,7 @@ modules:
         - v4l-utils
 
         # Auth & Security
+        - openssh-server
         - polkit
         - mate-polkit              
         - gnome-keyring
@@ -63,6 +64,7 @@ modules:
     system:
       enabled:
         - docker.service
+        - sshd.service
 
   - type: script
     scripts:
@@ -75,13 +77,14 @@ modules:
         repo:
           url: https://dl.flathub.org/repo/flathub.flatpakrepo
         install:
-          - com.bitwarden.desktop          
-          - com.discordapp.Discord         
-          - com.google.Chrome              
-          - com.spotify.Client             
-          - io.missioncenter.MissionCenter 
-          - org.gnome.Loupe                
-          - org.gnome.FileRoller           
+          - com.bitwarden.desktop
+          - com.discordapp.Discord
+          - com.google.Chrome
+          - com.spotify.Client
+          - io.missioncenter.MissionCenter
+          - org.gnome.Loupe
+          - org.gnome.FileRoller
+          - io.github.mfat.sshpilot
 
   - type: chezmoi
     repository: "https://github.com/boblangley/dotfiles"
@@ -98,6 +101,7 @@ modules:
         - FiraMono
         - Hack
         - SourceCodePro
+        - Symbols
       google-fonts:
         - Roboto
         - Open Sans
