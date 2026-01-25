@@ -101,7 +101,7 @@ modules:
         - FiraMono
         - Hack
         - SourceCodePro
-        - Symbols Only
+        - NerdFontsSymbolsOnly
       google-fonts:
         - Roboto
         - Open Sans
